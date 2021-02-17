@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Animate 3D buildings based on ambient sounds</title>
+<title>Animate 3D buildings dancing</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet" />
@@ -16,9 +16,7 @@
 
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoieWFuc3VuMjAyMCIsImEiOiJjazg4dmFsbGcwMGcwM2xxc2Zla21zZG91In0.Kkqjs0MWxmSEeqe7yO-k5g';
-    /* global Promise */
-
-    // Use a minimal variant of the Mapbox Dark style, with certain features removed.
+     
     var map = new mapboxgl.Map({
         style: 'mapbox://styles/examples/cj68bstx01a3r2rndlud0pwpv',
         center: {
@@ -38,7 +36,7 @@
         var maxHeight = 200;
         var binWidth = maxHeight / bins;
 
-        // Divide the buildings into 16 bins based on their true height, using a layer filter.
+       
         for (var i = 0; i < bins; i++) {
             map.addLayer({
                 'id': '3d-buildings-' + i,
@@ -63,22 +61,18 @@
             });
         }
 
-        // Older browsers might not implement mediaDevices at all, so we set an empty object first
+      
         if (navigator.mediaDevices === undefined) {
             navigator.mediaDevices = {};
         }
 
-        // Some browsers partially implement mediaDevices. We can't just assign an object
-        // with getUserMedia as it would overwrite existing properties.
-        // Here, we will just add the getUserMedia property if it's missing.
-        if (navigator.mediaDevices.getUserMedia === undefined) {
+              if (navigator.mediaDevices.getUserMedia === undefined) {
             navigator.mediaDevices.getUserMedia = function (constraints) {
-                // First get ahold of the legacy getUserMedia, if present
+               
                 var getUserMedia =
                     navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-                // Some browsers just don't implement it - return a rejected promise with an error
-                // to keep a consistent interface
+             
                 if (!getUserMedia) {
                     return Promise.reject(
                         new Error(
@@ -87,7 +81,6 @@
                     );
                 }
 
-                // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
                 return new Promise(function (resolve, reject) {
                     getUserMedia.call(navigator, constraints, resolve, reject);
                 });
@@ -97,8 +90,7 @@
         navigator.mediaDevices
             .getUserMedia({ audio: true })
             .then(function (stream) {
-                // Set up a Web Audio AudioContext and AnalyzerNode, configured to return the
-                // same number of bins of audio frequency data.
+              
                 var audioCtx = new (window.AudioContext ||
                     window.webkitAudioContext)();
 
@@ -117,7 +109,7 @@
                 function draw(now) {
                     analyser.getByteFrequencyData(dataArray);
 
-                    // Use that data to drive updates to the fill-extrusion-height property.
+                   
                     var avg = 0;
                     for (var i = 0; i < bins; i++) {
                         avg += dataArray[i];
@@ -129,8 +121,7 @@
                     }
                     avg /= bins;
 
-                    // Animate the map bearing and light color over time, and make the light more
-                    // intense when the audio is louder.
+                   
                     map.setBearing(now / 500);
                     map.setLight({
                         color:
